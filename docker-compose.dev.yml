@@ -1,0 +1,35 @@
+# Development: App + Neon Local (ephemeral branches)
+# Usage: docker compose -f docker-compose.dev.yml up
+
+services:
+  neon-local:
+    image: neondatabase/neon_local:latest
+    ports:
+      - '5432:5432'
+    environment:
+      NEON_API_KEY: ${NEON_API_KEY}
+      NEON_PROJECT_ID: ${NEON_PROJECT_ID}
+      PARENT_BRANCH_ID: ${NEON_PARENT_BRANCH_ID:-}
+    env_file:
+      - .env.development
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - '${PORT:-4000}:4000'
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: postgres://neon:npg@neon-local:5432/neondb
+      NEON_LOCAL: 'true'
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
+      ARCJET_KEY: ${ARCJET_KEY:-}
+    env_file:
+      - .env.development
+    depends_on:
+      - neon-local
+    volumes:
+      - ./src:/app/src:ro
+    command: sh -c "sleep 10 && node src/scripts/migrate-neon-local.js && node --watch src/index.js"

@@ -1,0 +1,14 @@
+# Development: includes dev dependencies for watch mode and migrations
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+
+EXPOSE 4000
+
+# migrations + app started via docker-compose command
+CMD ["node", "src/index.js"]

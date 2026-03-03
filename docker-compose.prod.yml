@@ -1,0 +1,20 @@
+# Production: App connects to Neon Cloud (no local database)
+# Usage: docker compose -f docker-compose.prod.yml up
+# Requires: .env.production with DATABASE_URL pointing to Neon Cloud
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${PORT:-4000}:4000'
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      ARCJET_KEY: ${ARCJET_KEY:-}
+    env_file:
+      - .env.production
+    restart: unless-stopped

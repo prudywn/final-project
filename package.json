@@ -12,7 +12,8 @@
     "format:check": "prettier --check .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "docker:dev": "docker compose --env-file .env.development -f docker-compose.dev.yml up --build -d"
   },
   "keywords": [],
   "author": "",
